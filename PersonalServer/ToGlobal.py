@@ -2,11 +2,12 @@ import requests
 import random
 from Common.MessageType import MessageType
 
-globalIP = '127.0.0.1:5000'
+globalIP = 'http://192.168.1.50:5000'
 
 def addNewUser(username):
     req = requests.request('POST', globalIP,
-                           data={'messageType': MessageType.PERSONAL_INIT_INIT, 'username': username, 'public-key': '123'})
+                           data={'messageType': MessageType.PERSONAL_INIT_INIT.value, 'username': username,
+                                 'public-key': '123'})
 
     if req.status_code != 200:
         print('can\'t register user, request status $s' % req.status_code)
@@ -24,9 +25,10 @@ def addNewUser(username):
     else:
         print("NOT added new user "+username)
 
+
 def registerIPadress(username, address):
     req = requests.request('POST', globalIP,
-                           data={'messageType': MessageType.PERSONAL_ONLINE_INIT, 'username': username,
+                           data={'messageType': MessageType.PERSONAL_ONLINE_INIT.value, 'username': username,
                                  'personal-ip': address})
 
     if req.status_code != 200:
@@ -45,10 +47,10 @@ def registerIPadress(username, address):
     else:
         print('ID address %s for user %s NOT registered' % (address, username))
 
+
 def addDevice(username, otp):
     req = requests.request('POST', globalIP,
-                           data={'messageType': MessageType.DEVICE_INIT_INIT, 'username': username,
-                                 'otp': otp})
+                           data={'messageType': MessageType.DEVICE_INIT_INIT.value, 'username': username, 'otp': otp})
 
     if req.status_code != 200:
         print('can\'t register user, request status $s' % req.status_code)

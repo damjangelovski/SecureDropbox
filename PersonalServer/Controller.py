@@ -1,9 +1,11 @@
 
 def deviceInitFromGlobal(request):
-    pass
+    return 'OK'
+
 
 def deviceInitFromDevice(request):
-    pass
+    return 'OK'
+
 
 def connectDevice(request):
-    pass
+    return 'OK'

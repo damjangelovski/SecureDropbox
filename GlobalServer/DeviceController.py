@@ -24,7 +24,7 @@ def addDevice(request):
     personalIP = repo.getIP(username)
     if personalIP != '':
         requests.request(requests.request('POST', personalIP,
-                           data={'messageType': MessageType.DEVICE_INIT_OK_TO_PERSONAL, 'username': username,
+                           data={'messageType': MessageType.DEVICE_INIT_OK_TO_PERSONAL.value, 'username': username,
                                  'deviceId': 1}))
 
     return jsonify(messageType=MessageType.DEVICE_INIT_OK_TO_DEVICE.value, status='OK')

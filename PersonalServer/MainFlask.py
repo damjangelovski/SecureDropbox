@@ -14,10 +14,13 @@ router = {
 @app.route('/')
 def index():
     if request.method != 'POST':
+        print('not POST request')
         return 'not POST request'
-    if 'messageType' not in request.form['messageType']:
+    if 'messageType' not in request.form:
+        print('no messageType included')
         return 'no messageType included'
     if request.form['messageType'] not in router:
+        print("messageType %d not handled" % (request.form['messageType']))
         return "messageType %d not handled" % (request.form['messageType'])
     return router.get(request.form['messageType'])(request.form)
 

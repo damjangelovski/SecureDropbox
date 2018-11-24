@@ -11,7 +11,7 @@ app.secret_key = 'any random string'
 
 router = {
     MessageType.PERSONAL_INIT_INIT.value: psc.addNewUser,
-    MessageType.PERSONAL_ONLINE_INIT.value: psc.addPersonalServerIPadress,
+    MessageType.PERSONAL_ONLINE_INIT: psc.addPersonalServerIPadress,
     MessageType.DEVICE_INIT_INIT: psc.addOTPforNewDevice,
     MessageType.DEVICE_INIT_START: dc.addDevice,
     MessageType.DEVICE_ONLINE_INIT: dc.getPersonalServerIPadress,
@@ -26,8 +26,13 @@ def helloPing():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method != 'POST':
+        print('not POST request')
         return 'not POST request'
+    if 'messageType' not in request.form:
+        print('no messageType included')
+        return 'no messageType included'
     if request.form['messageType'] not in router:
+        print("messageType %s not handled" % (request.form['messageType']))
         return "messageType %s not handled" % (request.form['messageType'])
     return router.get(request.form['messageType'])(request.form)
 
