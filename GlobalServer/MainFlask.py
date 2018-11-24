@@ -28,13 +28,13 @@ def index():
     if request.method != 'POST':
         print('not POST request')
         return 'not POST request'
-    if 'messageType' not in request.form:
+    if MessageProperty.MESSAGE_TYPE not in request.form:
         print('no messageType included')
         return 'no messageType included'
-    if request.form['messageType'] not in router:
-        print("messageType %s not handled" % (request.form['messageType']))
-        return "messageType %s not handled" % (request.form['messageType'])
-    return router.get(request.form['messageType'])(request.form)
+    if request.form[MessageProperty.MESSAGE_TYPE] not in router:
+        print("messageType %s not handled" % (request.form[MessageProperty.MESSAGE_TYPE]))
+        return "messageType %s not handled" % (request.form[MessageProperty.MESSAGE_TYPE])
+    return router.get(request.form[MessageProperty.MESSAGE_TYPE])(request.form)
 
 
 @app.route('/users', methods=['GET'])
