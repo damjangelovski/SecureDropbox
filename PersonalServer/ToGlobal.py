@@ -2,7 +2,7 @@ import requests
 import random
 from Common.MessageType import MessageType
 
-globalIP = '127.0.0.1:500'
+globalIP = '127.0.0.1:5000'
 
 def addNewUser(username):
     req = requests.request('POST', globalIP,

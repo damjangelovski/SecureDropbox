@@ -8,7 +8,7 @@ def setNewUser(username, publicKey):
     conn = sqlite3.connect('securedropbox.db')
     conn.execute("INSERT INTO USER (USERNAME,PUBLICKEY,IP,OTP,OTPDATE,IPDATE) \
       VALUES ('" + username + "', '" + publicKey + "', null, null, \
-      " + str(time.time()) + ", " + str(time.time()) + ")")
+      null, null)")
     conn.commit()
     conn.close()
     print('added user with username ' + username)
@@ -55,14 +55,14 @@ def getOTP(username):
     conn.close()
 
 
-def setDevice(deviceId, username, devicePubKey):
+def setDevice(username, devicePubKey):
     conn = sqlite3.connect('securedropbox.db')
-    conn.execute("INSERT INTO DEVICE (ID, USERNAME,PUBLICKEY) \
-      VALUES ('" + deviceId + "', '" + username + "', '" + publicKey + "' )")
+    conn.execute("INSERT INTO DEVICE (USERNAME,PUBLICKEY) \
+      VALUES ('" + username + "', '" + devicePubKey + "' )")
     conn.commit()
     conn.close()
     
-    print("set device for username %s with pubKey %s and id %d" %(username,devicePubKey, deviceId))
+    print("set device for username %s with pubKey %s and id" %(username,devicePubKey))
 
 
 def getDevicePubKey(username, deviceId):
@@ -71,13 +71,28 @@ def getDevicePubKey(username, deviceId):
     conn.close()
 
 
-def testing():
+def getUsers():
+    users = []
+
     conn = sqlite3.connect('securedropbox.db')
     cursor = conn.execute('select * from USER')
-    for row in cursor:
-        print(row)
-    conn.close()
 
+    for user in cursor:
+        users.append(user)
+
+    return users
+
+
+def getDevices():
+    devices = []
+
+    conn = sqlite3.connect('securedropbox.db')
+    cursor = conn.execute('select * from DEVICE')
+
+    for device in cursor:
+        devices.append(device)
+
+    return devices
 
 def getFirst(cursor):
     for row in cursor:

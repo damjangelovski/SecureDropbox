@@ -18,7 +18,7 @@ def initDatabase():
     print("Table created successfully")
 
     conn.execute('''CREATE TABLE IF NOT EXISTS DEVICE
-             (ID TEXT PRIMARY KEY     NOT NULL,
+             (ID INTEGER PRIMARY KEY    AUTOINCREMENT,
              USERNAME           TEXT    NOT NULL,
              PUBLICKEY            TEXT     NOT NULL);''')
     print("Table created successfully")

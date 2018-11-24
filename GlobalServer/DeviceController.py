@@ -42,3 +42,7 @@ def getPersonalServerIPadress(request):
     IP = repo.getIP(request.get('username'))
 
     return jsonify(messageType=MessageType.DEVICE_ONLINE_GLOBAL_RETURN.value, status='OK', personalIp=IP)
+
+
+def getAllDevices():
+    return repo.getDevices()

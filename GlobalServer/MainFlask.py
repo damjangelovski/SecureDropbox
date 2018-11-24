@@ -1,4 +1,5 @@
 from flask import Flask, session, redirect, url_for, escape, request
+import json
 from Common.MessageType import *
 from GlobalServer import PersonalServerController as psc
 from GlobalServer import DeviceController as dc
@@ -29,6 +30,20 @@ def index():
     if request.form['messageType'] not in router:
         return "messageType %s not handled" % (request.form['messageType'])
     return router.get(request.form['messageType'])(request.form)
+
+
+@app.route('/users', methods=['GET'])
+def users():
+    users = psc.getAllUsers()
+
+    return json.dumps(users)
+
+
+@app.route('/devices', methods=['GET'])
+def devices():
+    devices = dc.getAllDevices()
+
+    return json.dumps(devices)
 
 def init():
     CreateDB.initDatabase()

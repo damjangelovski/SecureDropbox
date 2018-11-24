@@ -44,3 +44,7 @@ def addOTPforNewDevice(request):
     repo.setIP(request.get('username'), request.get('otp'))
 
     return jsonify(messageType=MessageType.PERSONAL_INIT_OK, status='OK')
+
+
+def getAllUsers():
+    return repo.getUsers()
