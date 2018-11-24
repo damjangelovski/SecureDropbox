@@ -7,42 +7,48 @@ from GlobalServer import SQLiteRepo as repo
 
 def addDevice(request):
 
-    if MessageProperty.USERNAME not in request:
+    if MessageProperty.USERNAME.value not in request:
         print(' bad new user request, no username provided')
-        return jsonify(messageType=MessageType.PERSONAL_INIT_OK.value, status='no username')
-    username = request.get(MessageProperty.USERNAME)
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value,
+                        MessageProperty.STATUS.value: 'no username'})
+    username = request.get(MessageProperty.USERNAME.value)
 
-    if MessageProperty.ONE_TIME_PAD not in request:
+    if MessageProperty.ONE_TIME_PAD.value not in request:
         print(' bad new user request, no one time pad provided')
-        return jsonify(messageType=MessageType.PERSONAL_INIT_OK, M='no otp')
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK, MessageProperty.STATUS.value: 'no otp'})
 
-    if MessageProperty.DEVICE_PUBLIC_KEY not in request:
+    if MessageProperty.DEVICE_PUBLIC_KEY.value not in request:
         print(' bad new user request, no public key for device provided')
-        return jsonify(messageType=MessageType.PERSONAL_INIT_OK, status='no device-public-key')
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK,
+                        MessageProperty.STATUS.value: 'no device-public-key'})
 
-    repo.setDevice(1, username, request.get(MessageProperty.DEVICE_PUBLIC_KEY))
+    repo.setDevice(1, username, request.get(MessageProperty.DEVICE_PUBLIC_KEY.value))
 
     personalIP = repo.getIP(username)
     if personalIP != '':
         requests.request(requests.request('POST', personalIP,
-                           data={MessageProperty.MESSAGE_TYPE: MessageType.DEVICE_INIT_OK_TO_PERSONAL.value, MessageProperty.USERNAME: username,
-                                 MessageProperty.DEVICE_ID: 1}))
+                           data={MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK_TO_PERSONAL.value,
+                                 MessageProperty.USERNAME.value: username,MessageProperty.DEVICE_ID.value: 1}))
 
-    return jsonify(messageType=MessageType.DEVICE_INIT_OK_TO_DEVICE.value, status='OK')
+    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK_TO_DEVICE.value,
+                    MessageProperty.STATUS.value: 'OK'})
 
 def getPersonalServerIPadress(request):
 
-    if MessageProperty.USERNAME not in request:
+    if MessageProperty.USERNAME.value not in request:
         print(' bad new user request, no username provided')
-        return jsonify(messageType=MessageType.PERSONAL_INIT_OK.value, status='no username')
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value,
+                        MessageProperty.STATUS.value: 'no username'})
 
-    if MessageProperty.DEVICE_ID not in request:
+    if MessageProperty.DEVICE_ID.value not in request:
         print(' bad new user request, no ID for device provided')
-        return jsonify(messageType=MessageType.PERSONAL_INIT_OK, status='no deviceId')
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK,
+                        MessageProperty.STATUS.value: 'no deviceId'})
 
-    IP = repo.getIP(request.get(MessageProperty.USERNAME))
+    IP = repo.getIP(request.get(MessageProperty.USERNAME.value))
 
-    return jsonify(messageType=MessageType.DEVICE_ONLINE_GLOBAL_RETURN.value, status='OK', personalIp=IP)
+    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_ONLINE_GLOBAL_RETURN.value,
+                    MessageProperty.STATUS.value: 'OK', MessageProperty.PERSONAL_IP_SOCKET.value: IP})
 
 
 def getAllDevices():

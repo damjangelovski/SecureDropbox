@@ -9,21 +9,21 @@ globalIP = 'http://127.0.0.1:5000/'
 
 def addNewUser(username):
     req = requests.request('POST', globalIP,
-                           data={MessageProperty.MESSAGE_TYPE: MessageType.PERSONAL_INIT_INIT.value, MessageProperty.USERNAME: username,
-                                 'public-key': '123'})
+                           data={MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_INIT.value, MessageProperty.USERNAME.value: username,
+                                 MessageProperty.PERSONAL_PUBLIC_KEY.value: '123'})
 
     if req.status_code != 200:
-        print('can\'t register user, request status $s' % req.status_code)
+        print('can\'t register user, request status %s' % req.status_code)
         exit(1)
     resp = req.json()
-    if resp.get(MessageProperty.MESSAGE_TYPE) != MessageType.PERSONAL_INIT_OK:
-        print('bad message type %d, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE))
+    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.PERSONAL_INIT_OK:
+        print('bad message type %d, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE.value))
 
-    if MessageProperty.STATUS not in resp:
+    if MessageProperty.STATUS.value not in resp:
         print('status not in response')
         return
 
-    if resp.get(MessageProperty.STATUS) == 'OK':
+    if resp.get(MessageProperty.STATUS.value) == 'OK':
         print("added new user "+username)
     else:
         print("NOT added new user "+username)
@@ -31,21 +31,21 @@ def addNewUser(username):
 
 def registerIPadress(username, address):
     req = requests.request('POST', globalIP,
-                           data={MessageProperty.MESSAGE_TYPE: MessageType.PERSONAL_ONLINE_INIT.value, MessageProperty.USERNAME: username,
+                           data={MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_ONLINE_INIT.value, MessageProperty.USERNAME.value: username,
                                  'personal-ip': address})
 
     if req.status_code != 200:
         print('can\'t register IP, request status $s' % req.status_code)
         exit(1)
     resp = req.json()
-    if resp.get(MessageProperty.MESSAGE_TYPE) != MessageType.PERSONAL_ONLINE_OK:
-        print('bad message type %d, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE))
+    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.PERSONAL_ONLINE_OK:
+        print('bad message type %d, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE.value))
 
-    if MessageProperty.STATUS not in resp:
+    if MessageProperty.STATUS.value not in resp:
         print('status not in response')
         return
 
-    if resp.get(MessageProperty.STATUS) == 'OK':
+    if resp.get(MessageProperty.STATUS.value) == 'OK':
         print('ID address %s for user %s registered' % (address, username))
     else:
         print('ID address %s for user %s NOT registered' % (address, username))
@@ -53,20 +53,20 @@ def registerIPadress(username, address):
 
 def addDevice(username, otp):
     req = requests.request('POST', globalIP,
-                           data={MessageProperty.MESSAGE_TYPE: MessageType.DEVICE_INIT_INIT.value, MessageProperty.USERNAME: username, MessageProperty.ONE_TIME_PAD: otp})
+                           data={MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_INIT.value, MessageProperty.USERNAME.value: username, MessageProperty.ONE_TIME_PAD.value: otp})
 
     if req.status_code != 200:
         print('can\'t register user, request status $s' % req.status_code)
         exit(1)
     resp = req.json()
-    if resp.get(MessageProperty.MESSAGE_TYPE) != MessageType.PERSONAL_INIT_OK:
-        print('bad message type %d, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE))
+    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.PERSONAL_INIT_OK:
+        print('bad message type %d, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE.value))
 
-    if MessageProperty.STATUS not in resp:
+    if MessageProperty.STATUS.value not in resp:
         print('status not in response')
         return
 
-    if resp.get(MessageProperty.STATUS) == 'OK':
+    if resp.get(MessageProperty.STATUS.value) == 'OK':
         print("added new user " + username)
     else:
         print("NOT added new user " + username)

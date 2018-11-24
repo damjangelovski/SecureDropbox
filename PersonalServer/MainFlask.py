@@ -16,13 +16,13 @@ def index():
     if request.method != 'POST':
         print('not POST request')
         return 'not POST request'
-    if MessageProperty.MESSAGE_TYPE not in request.form:
-        print('no messageType included')
-        return 'no messageType included'
-    if request.form[MessageProperty.MESSAGE_TYPE] not in router:
-        print("messageType %d not handled" % (request.form[MessageProperty.MESSAGE_TYPE]))
-        return "messageType %d not handled" % (request.form[MessageProperty.MESSAGE_TYPE])
-    return router.get(request.form[MessageProperty.MESSAGE_TYPE])(request.form)
+    if MessageProperty.MESSAGE_TYPE.value not in request.form:
+        print('no message-type included')
+        return 'no message-type included'
+    if request.form[MessageProperty.MESSAGE_TYPE.value] not in router:
+        print("message-type %d not handled" % (request.form[MessageProperty.MESSAGE_TYPE.value]))
+        return "message-type %d not handled" % (request.form[MessageProperty.MESSAGE_TYPE.value])
+    return router.get(request.form[MessageProperty.MESSAGE_TYPE.value])(request.form)
 
 
 def init():

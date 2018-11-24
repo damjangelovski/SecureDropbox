@@ -1,8 +1,9 @@
 from flask import Flask, session, redirect, url_for, escape, request
 import json
+
+from Common.MessageProperty import MessageProperty
 from Common.MessageType import *
 from GlobalServer import PersonalServerController as psc
-from GlobalServer import DeviceController as dc
 from GlobalServer import DeviceController as dc
 from GlobalServer import CreateDB
 
@@ -28,13 +29,13 @@ def index():
     if request.method != 'POST':
         print('not POST request')
         return 'not POST request'
-    if MessageProperty.MESSAGE_TYPE not in request.form:
-        print('no messageType included')
-        return 'no messageType included'
-    if request.form[MessageProperty.MESSAGE_TYPE] not in router:
-        print("messageType %s not handled" % (request.form[MessageProperty.MESSAGE_TYPE]))
-        return "messageType %s not handled" % (request.form[MessageProperty.MESSAGE_TYPE])
-    return router.get(request.form[MessageProperty.MESSAGE_TYPE])(request.form)
+    if MessageProperty.MESSAGE_TYPE.value not in request.form:
+        print('no message-type included')
+        return 'no message-type included'
+    if request.form[MessageProperty.MESSAGE_TYPE.value] not in router:
+        print("message-type %s not handled" % (request.form[MessageProperty.MESSAGE_TYPE.value]))
+        return "message-type %s not handled" % (request.form[MessageProperty.MESSAGE_TYPE.value])
+    return router.get(request.form[MessageProperty.MESSAGE_TYPE.value])(request.form)
 
 
 @app.route('/users', methods=['GET'])
