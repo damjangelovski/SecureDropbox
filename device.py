@@ -1,5 +1,5 @@
 import sys, getopt
-from .Communication import *
+from Device.Communication import *
 
 
 def main(argv):

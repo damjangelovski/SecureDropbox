@@ -1,7 +1,6 @@
 import sys, getopt
 import random
-from .ToGlobal import *
-from .MainFlask import init
+from PersonalServer import ToGlobal, MainFlask
 
 
 def main(argv):
@@ -12,12 +11,14 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"u:nd", ["new-user=", "new-device="])
     except getopt.GetoptError:
-        print ('personal-server.py -u <username> [-n] [-d]')
+        print('getopt error, usage: personal-server.py -u <username> [-n] [-d]')
         sys.exit(2)
     for opt, arg in opts:
-        if opt in ("-u", "--new-user"):
+        if opt in ("-u", "--username"):
+            username = arg
+        if opt in ("-n", "--new-user"):
             shouldAddNewUser = True
-        elif opt in ("-o", "--new-device"):
+        elif opt in ("-d", "--new-device"):
             shouldAddNewDevice = True
 
     if username == '':
@@ -25,14 +26,14 @@ def main(argv):
         sys.exit(2)
 
     if shouldAddNewUser:
-        addNewUser(username)
+        ToGlobal.addNewUser(username)
     if shouldAddNewDevice:
-        otp = random.randint(100000,999999)
-        addDevice(username)
+        otp = random.randint(100000, 999999)
+        ToGlobal.addDevice(username, otp)
         print('ready to add device with one time pad %d' % otp)
 
-    init()
+    MainFlask.init()
 
 
 if __name__ == "__main__":
-   main(sys.argv[1:])
+    main(sys.argv[1:])
