@@ -4,6 +4,7 @@ from flask import Flask, session, redirect, url_for, escape, request
 
 from Common.MessageProperty import MessageProperty
 from Common.MessageType import *
+from Common import Sync
 from PersonalServer import Controller, ToGlobal
 
 app = Flask(__name__)
@@ -42,4 +43,5 @@ def init(usernameTmp):
     username = usernameTmp
     ToGlobal.registerIPadress(username, myIPsocket)
 
+    Sync.init('D:\dev\pycharm\personalSyncFolder')
     app.run(debug=True, use_reloader=False, host='0.0.0.0', port=5001)

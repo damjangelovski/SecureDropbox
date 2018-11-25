@@ -82,8 +82,6 @@ def syncRequest(request):
                     MessageProperty.STATUS.value: 'OK'})
 
 
-
-
 def syncCheck():
     changes = checkChanges()
     print('personal server has changes='+changes)

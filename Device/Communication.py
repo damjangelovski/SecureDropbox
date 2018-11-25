@@ -8,7 +8,7 @@ from threading import Timer
 globalIP = 'http://127.0.0.1:5000'
 personalIP = ''
 deviceID = 0
-rootPath = 'D:\dev\pycharm\syncFolder'
+rootPath = 'D:\dev\pycharm\deviceSyncFolder'
 refreshIntervalInSeconds = 3
 
 
