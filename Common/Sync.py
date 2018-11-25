@@ -40,10 +40,14 @@ def prepareFile(filePath, modifiedDate, changedFiles):
         encoded_string = base64.b64encode(file.read())
 
         data = {}
-        data['path'] = filePath
+        data['path'] = getRelativePath(filePath)
         data['contents'] = encoded_string
 
         changedFiles.append(data)
+
+
+def getRelativePath(path):
+    return os.path.relpath(path, rootPath)
 
 
 def applyChanges(filePath, encoded_string):
