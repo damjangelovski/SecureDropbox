@@ -18,7 +18,7 @@ router = {
 myIPsocket = ''
 username = ''
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method != 'POST':
         print('not POST request')
@@ -34,10 +34,10 @@ def index():
 
 def init(usernameTmp):
     global myIPsocket
-    myIPsocket = socket.gethostbyname(socket.gethostname())+':5000'
+    myIPsocket = socket.gethostbyname(socket.gethostname())+':5001'
     print("socket '%s'"%myIPsocket)
     global username
     username = usernameTmp
     ToGlobal.registerIPadress(username, myIPsocket)
 
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False, host='0.0.0.0', port=5001)

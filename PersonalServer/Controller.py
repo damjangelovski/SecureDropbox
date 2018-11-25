@@ -11,21 +11,27 @@ def deviceInitFromGlobal(request):
 def deviceInitFromDevice(request):
     if 'device-id' not in request:
         print(' bad new user request, no device-id provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value, MessageProperty.STATUS.value: 'no username'})
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK.value, MessageProperty.STATUS.value: 'no username'})
 
-    if 'device-public-key' not in request:
+    if MessageProperty.DEVICE_PUBLIC_KEY.value not in request:
         print(' bad new user request, no device-public-key for personal server provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK, MessageProperty.STATUS.value: 'no personal-public-key'})
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK.value,
+                        MessageProperty.STATUS.value: 'no device-public-key'})
 
-    if 'otp' not in request:
+    if MessageProperty.ONE_TIME_PAD.value not in request:
         print(' bad new user request, no one time pad provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK, MessageProperty.STATUS.value: 'no otp'})
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK.value, MessageProperty.STATUS.value: 'no otp'})
 
     if 'username' not in request:
         print(' bad new user request, no username provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value, MessageProperty.STATUS.value: 'no username'})
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK.value, MessageProperty.STATUS.value: 'no username'})
 
-    addDeviceToLocalStorage(request.get('device-id'), request.get('device-public-key'), request.get('username'))
+    addDeviceToLocalStorage(request.get(MessageProperty.DEVICE_ID.value),
+                            request.get(MessageProperty.DEVICE_PUBLIC_KEY.value),
+                            request.get(MessageProperty.ONE_TIME_PAD.value),
+                            request.get(MessageProperty.USERNAME.value))
+
+    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK.value, MessageProperty.STATUS.value: 'OK'})
 
 
 def connectDevice(request):

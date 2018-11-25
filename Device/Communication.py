@@ -16,7 +16,7 @@ def registerDevice(username, otp):
         print('can\'t register Device, request status %s'%req.status_code)
         return
     resp = req.json()
-    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.DEVICE_INIT_OK_TO_DEVICE:
+    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.DEVICE_INIT_OK_TO_DEVICE.value:
         print('bad message type %s, continuing...'%resp.get(MessageProperty.MESSAGE_TYPE.value))
 
     if MessageProperty.DEVICE_ID.value not in resp:
@@ -24,7 +24,7 @@ def registerDevice(username, otp):
     else:
         global deviceID
         deviceID = resp.get(MessageProperty.DEVICE_ID.value)
-        print("id is %d"%deviceID)
+        print("this device id is %d"%deviceID)
 
     if MessageProperty.PERSONAL_IP_SOCKET.value not in resp:
         print('personal server IP not included, breaking...')
@@ -32,16 +32,17 @@ def registerDevice(username, otp):
     global personalIP
     personalIP = resp.get(MessageProperty.PERSONAL_IP_SOCKET.value)
 
-    finalOK = requests.request('POST', personalIP,
+    finalOK = requests.request('POST', 'http://'+personalIP,
                                data = {MessageProperty.MESSAGE_TYPE.value:MessageType.DEVICE_INIT_CONNECT_TO_PERSONAL.value,
-                            MessageProperty.USERNAME.value:username,MessageProperty.ONE_TIME_PAD.value:otp, MessageProperty.DEVICE_ID.value:deviceID})
+                            MessageProperty.USERNAME.value:username,MessageProperty.ONE_TIME_PAD.value:otp,
+                           MessageProperty.DEVICE_ID.value: deviceID, MessageProperty.DEVICE_PUBLIC_KEY.value: '123'})
 
     if finalOK.status_code != 200:
-        print('can\'t register Device, request status $s'%req.status_code)
+        print('can\'t register Device, request status %s'%finalOK.status_code)
         return
     finalOKr = finalOK.json()
-    if finalOKr.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.DEVICE_INIT_OK:
-        print('bad message type %d, continuing...'%finalOKr.get(MessageProperty.MESSAGE_TYPE.value))
+    if finalOKr.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.DEVICE_INIT_OK.value:
+        print('bad message type %s, continuing...'%finalOKr.get(MessageProperty.MESSAGE_TYPE.value))
 
     if MessageProperty.STATUS.value not in finalOKr:
         print('status not in final ok response')
@@ -70,7 +71,7 @@ def startDevice(username):
     global personalIP
     personalIP = resp.get(MessageProperty.PERSONAL_IP_SOCKET.value)
 
-    finalOK = requests.request('POST', personalIP, data={MessageProperty.MESSAGE_TYPE.value:MessageType.DEVICE_ONLINE_CONNECT,
+    finalOK = requests.request('POST', 'http://'+personalIP, data={MessageProperty.MESSAGE_TYPE.value:MessageType.DEVICE_ONLINE_CONNECT,
                                                 MessageProperty.USERNAME.value:username, MessageProperty.DEVICE_ID.value: deviceID})
 
     if finalOK.status_code != 200:

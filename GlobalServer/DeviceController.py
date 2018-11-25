@@ -27,23 +27,23 @@ def addDevice(request):
 
     personalIP = repo.getIP(username)
     if personalIP != '':
-        requests.request(requests.request('POST', personalIP,
-                           data={MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK_TO_PERSONAL.value,
-                                 MessageProperty.USERNAME.value: username, MessageProperty.DEVICE_ID.value: deviceId}))
+        url = 'http://' + personalIP
+        requests.request('POST', url, data={MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK_TO_PERSONAL.value,
+                                 MessageProperty.USERNAME.value: username, MessageProperty.DEVICE_ID.value: deviceId})
 
-    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK_TO_DEVICE.value,
-                    MessageProperty.PERSONAL_IP_SOCKET: personalIP, MessageProperty.STATUS.value: 'OK'})
+    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK_TO_DEVICE.value, MessageProperty.DEVICE_ID.value: deviceId,
+                    MessageProperty.PERSONAL_IP_SOCKET.value: personalIP, MessageProperty.STATUS.value: 'OK'})
 
 def getPersonalServerIPadress(request):
 
     if MessageProperty.USERNAME.value not in request:
         print(' bad get IP request, no username provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value,
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_ONLINE_GLOBAL_RETURN.value,
                         MessageProperty.STATUS.value: 'no username'})
 
     if MessageProperty.DEVICE_ID.value not in request:
         print(' bad get IP request, no ID for device provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value,
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_ONLINE_GLOBAL_RETURN.value,
                         MessageProperty.STATUS.value: 'no deviceId'})
 
     IP = repo.getIP(request.get(MessageProperty.USERNAME.value))
