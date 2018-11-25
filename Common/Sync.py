@@ -12,6 +12,8 @@ def init(rootPathTmp):
 def checkChanges():
     files = getFiles(rootPath)
 
+    changedFiles = []
+
     for file in files:
         now = time.time()
         modifiedDate = os.path.getmtime(file)
@@ -20,27 +22,28 @@ def checkChanges():
         if file in dict:
             lastModifiedDate = dict[file]
             if lastModifiedDate == modifiedDate:
-                prepareFile(file, modifiedDate)
+                prepareFile(file, modifiedDate, changedFiles)
         else:
             if elapsedSeconds < refreshInterval:
-                prepareFile(file, modifiedDate)
+                prepareFile(file, modifiedDate, changedFiles)
 
 
-def prepareFile(filePath, modifiedDate):
+    return changedFiles
+
+
+def prepareFile(filePath, modifiedDate, changedFiles):
     dict[filePath] = modifiedDate
 
-    print('applying changes for file ' + filePath)
+    #print('applying changes for file ' + filePath)
 
     with open(filePath, "rb") as file:
         encoded_string = base64.b64encode(file.read())
-
-        print(encoded_string)
 
         data = {}
         data['path'] = filePath
         data['contents'] = encoded_string
 
-        return data
+        changedFiles.append(data)
 
 
 def applyChanges(filePath, encoded_string):
