@@ -43,6 +43,15 @@ def prepareFile(filePath, modifiedDate):
         return data
 
 
+def applyChanges(filePath, encoded_string):
+    absolutePath = rootPath + os.path.sep + filePath
+
+    print('saving to ' + absolutePath)
+
+    with open(absolutePath, "wb") as file:
+        file.write(base64.decodebytes(encoded_string))
+
+
 def getFiles(directory):
     files = []
     listdir(directory, files)

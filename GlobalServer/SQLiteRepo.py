@@ -59,10 +59,17 @@ def setDevice(username, devicePubKey):
     conn = sqlite3.connect('securedropbox.db')
     conn.execute("INSERT INTO DEVICE (USERNAME,PUBLICKEY) \
       VALUES ('" + username + "', '" + devicePubKey + "' )")
+
+    cursor = conn.execute("SELECT MAX(ID) FROM DEVICE WHERE USERNAME = '" + username + "'")
+
+    deviceId = getFirst(cursor)
+
     conn.commit()
     conn.close()
-    
+
     print("set device for username %s with pubKey %s and id" %(username,devicePubKey))
+
+    return deviceId
 
 
 def getDevicePubKey(username, deviceId):

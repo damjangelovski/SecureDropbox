@@ -22,8 +22,7 @@ def addDevice(request):
         return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK_TO_DEVICE.value,
                         MessageProperty.STATUS.value: 'no device-public-key'})
 
-    deviceId = 1
-    repo.setDevice(username, request.get(MessageProperty.DEVICE_PUBLIC_KEY.value))
+    deviceId = repo.setDevice(username, request.get(MessageProperty.DEVICE_PUBLIC_KEY.value))
 
     personalIP = repo.getIP(username)
     if personalIP != '':
