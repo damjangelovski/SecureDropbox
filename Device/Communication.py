@@ -1,11 +1,12 @@
 import requests
+import time
 
 from Common.MessageProperty import MessageProperty
 from Common.MessageType import MessageType
 from Common.Sync import *
 from threading import Timer
 
-globalIP = 'http://127.0.0.1:5000'
+globalIP = 'http://192.168.1.50:5000'
 personalIP = ''
 deviceID = 0
 rootPath = 'D:\dev\pycharm\deviceSyncFolder'
@@ -67,7 +68,7 @@ def startDevice(username):
         print('can\'t get personal IP, request status %s'%req.status_code)
         return
     resp = req.json()
-    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.DEVICE_ONLINE_GLOBAL_RETURN:
+    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.DEVICE_ONLINE_GLOBAL_RETURN.value:
         print('bad message type %s, continuing...'%resp.get(MessageProperty.MESSAGE_TYPE.value))
 
     if MessageProperty.PERSONAL_IP_SOCKET.value not in resp:
@@ -76,14 +77,14 @@ def startDevice(username):
     global personalIP
     personalIP = resp.get(MessageProperty.PERSONAL_IP_SOCKET.value)
 
-    finalOK = requests.request('POST', 'http://'+personalIP, data={MessageProperty.MESSAGE_TYPE.value:MessageType.DEVICE_ONLINE_CONNECT,
+    finalOK = requests.request('POST', 'http://'+personalIP, data={MessageProperty.MESSAGE_TYPE.value:MessageType.DEVICE_ONLINE_CONNECT.value,
                                                 MessageProperty.USERNAME.value:username, MessageProperty.DEVICE_ID.value: deviceID})
 
     if finalOK.status_code != 200:
         print('can\'t connect Device, request status %s'%req.status_code)
         return
     finalOKr = finalOK.json()
-    if finalOKr.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.DEVICE_ONLINE_OK:
+    if finalOKr.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.DEVICE_ONLINE_OK.value:
         print('bad message type %s, continuing...'%finalOKr.get(MessageProperty.MESSAGE_TYPE.value))
 
     if MessageProperty.STATUS.value not in finalOKr:
@@ -97,23 +98,27 @@ def startDevice(username):
     print("device connected for %s"%(username))
 
     init(rootPath)
-    Timer(refreshIntervalInSeconds, syncWithPersonal(username)).start()
+
+    # Timer(refreshIntervalInSeconds, syncWithPersonal(username)).start()
+    while True:
+        syncWithPersonal(username)
+        time.sleep(refreshIntervalInSeconds)
 
 def syncWithPersonal(username):
 
     changes = checkChanges()
-    print('device has changes='+changes)
+    print('device has changes='.join(changes))
 
     if len(changes) > 0:
 
-        syncReq = requests.request('POST', 'http://'+personalIP, data={MessageProperty.MESSAGE_TYPE.value:MessageType.SYNC_REQUEST,
+        syncReq = requests.request('POST', 'http://'+personalIP, data={MessageProperty.MESSAGE_TYPE.value:MessageType.SYNC_REQUEST.value,
                                                 MessageProperty.USERNAME.value:username, MessageProperty.DEVICE_ID.value: deviceID,
-                                                MessageProperty.FILE_CHANGES_OBJECT: changes})
+                                                MessageProperty.FILE_CHANGES_OBJECT.value: changes})
         if syncReq.status_code != 200:
             print('can\'t connect Device, request status %s' % syncReq.status_code)
             return
         syncReqr = syncReq.json()
-        if syncReqr.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.SYNC_REQUEST_OK:
+        if syncReqr.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.SYNC_REQUEST_OK.value:
             print('bad message type %s, continuing...' % syncReqr.get(MessageProperty.MESSAGE_TYPE.value))
 
         if MessageProperty.STATUS.value not in syncReqr:
@@ -126,14 +131,14 @@ def syncWithPersonal(username):
 
         print("device connected for %s" % (username))
 
-    syncCheckReq = requests.request('POST', 'http://'+personalIP, data={MessageProperty.MESSAGE_TYPE.value:MessageType.SYNC_CHECK,
+    syncCheckReq = requests.request('POST', 'http://'+personalIP, data={MessageProperty.MESSAGE_TYPE.value:MessageType.SYNC_CHECK.value,
                                                 MessageProperty.USERNAME.value:username, MessageProperty.DEVICE_ID.value: deviceID})
 
     if syncCheckReq.status_code != 200:
         print('can\'t connect Device, request status %s'%syncCheckReq.status_code)
         return
     syncCheckReqr = syncCheckReq.json()
-    if syncCheckReqr.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.SYNC_CHECK_OK:
+    if syncCheckReqr.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.SYNC_CHECK_OK.value:
         print('bad message type %s, continuing...'%syncCheckReqr.get(MessageProperty.MESSAGE_TYPE.value))
 
     if MessageProperty.STATUS.value not in syncCheckReqr:
@@ -144,5 +149,5 @@ def syncWithPersonal(username):
         print("personal server refused connection for  user %s"%(username))
         return
 
-    for change in syncCheckReqr.get(MessageProperty.FILE_CHANGES_OBJECT):
+    for change in syncCheckReqr.get(MessageProperty.FILE_CHANGES_OBJECT.value):
         applyChanges(change['path'], change.get['contents'])
