@@ -27,7 +27,6 @@ def checkChanges():
             if elapsedSeconds < refreshInterval:
                 prepareFile(file, modifiedDate, changedFiles)
 
-
     return changedFiles
 
 

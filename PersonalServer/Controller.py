@@ -2,6 +2,7 @@ from flask import jsonify
 
 from Common.MessageProperty import MessageProperty
 from Common.MessageType import MessageType
+from Common.Sync import *
 
 def deviceInitFromGlobal(request):
     return "OK"
@@ -9,7 +10,7 @@ def deviceInitFromGlobal(request):
 
 
 def deviceInitFromDevice(request):
-    if 'device-id' not in request:
+    if MessageProperty.DEVICE_ID not in request:
         print(' bad new user request, no device-id provided')
         return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK.value, MessageProperty.STATUS.value: 'no username'})
 
@@ -22,7 +23,7 @@ def deviceInitFromDevice(request):
         print(' bad new user request, no one time pad provided')
         return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK.value, MessageProperty.STATUS.value: 'no otp'})
 
-    if 'username' not in request:
+    if MessageProperty.USERNAME not in request:
         print(' bad new user request, no username provided')
         return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK.value, MessageProperty.STATUS.value: 'no username'})
 
@@ -69,13 +70,23 @@ def readDevicesFromLocalStorage(deviceId, devicePublicKey):
 
 def syncRequest(request):
 
-    #if MessageProperty.F.value not in request:
-    #    print(' bad sync request, no file changes object')
-    #    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK.value,
-    #                    MessageProperty.STATUS.value: 'no file changes object'})
+    if MessageProperty.FILE_CHANGES_OBJECT.value not in request:
+       print(' bad sync request, no file changes object')
+       return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_CHECK_OK.value,
+                       MessageProperty.STATUS.value: 'no file changes object'})
+
+    for change in request.get(MessageProperty.FILE_CHANGES_OBJECT):
+        applyChanges(change['path'], change.get['contents'])
+
+    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_CHECK_OK.value,
+                    MessageProperty.STATUS.value: 'OK'})
 
 
 
 
 def syncCheck():
-    pass
+    changes = checkChanges()
+    print('personal server has changes='+changes)
+    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_REQUEST_OK.value,
+                    MessageProperty.FILE_CHANGES_OBJECT: changes,
+                    MessageProperty.STATUS.value: 'OK'})

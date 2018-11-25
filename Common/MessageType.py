@@ -20,7 +20,9 @@ class MessageType(Enum):
     DEVICE_ONLINE_INIT = '11'
     DEVICE_ONLINE_GLOBAL_RETURN = '12'
     DEVICE_ONLINE_CONNECT = '13'
+    DEVICE_ONLINE_OK = '13.5'
 
     SYNC_CHECK = '14'
-    SYNC_REQUEST = '15'
-    SYNC_OK = '16'
+    SYNC_CHECK_OK = '15'
+    SYNC_REQUEST = '16'
+    SYNC_REQUEST_OK = '17'

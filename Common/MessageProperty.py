@@ -11,5 +11,6 @@ class MessageProperty(Enum):
     ONE_TIME_PAD = 'one-time-pad'
     DEVICE_PUBLIC_KEY = 'device-public-key'
     DEVICE_ID = 'device-id'
+    FILE_CHANGES_OBJECT = 'file-changes-object'
 
 
