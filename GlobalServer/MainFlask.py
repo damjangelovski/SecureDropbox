@@ -1,4 +1,4 @@
-from flask import Flask, session, redirect, url_for, escape, request
+from flask import Flask, session, redirect, url_for, escape, request, jsonify
 import json
 
 from Common.MessageProperty import MessageProperty
@@ -50,6 +50,15 @@ def devices():
     devices = dc.getAllDevices()
 
     return json.dumps(devices)
+
+
+@app.route('/drop', methods=['GET'])
+def dropAllTables():
+    CreateDB.dropDatabase()
+    CreateDB.initDatabase()
+
+    resp = jsonify(success=True)
+    return resp
 
 def init():
     CreateDB.initDatabase()

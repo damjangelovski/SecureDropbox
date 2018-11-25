@@ -24,3 +24,12 @@ def initDatabase():
     print("Table created successfully")
 
     conn.close()
+
+
+def dropDatabase():
+    conn = sqlite3.connect('securedropbox.db')
+
+    conn.execute('''DROP TABLE IF EXISTS USER''')
+    conn.execute('''DROP TABLE IF EXISTS DEVICE''')
+
+    conn.close()
