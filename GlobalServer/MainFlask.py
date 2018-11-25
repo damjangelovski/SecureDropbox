@@ -12,10 +12,10 @@ app.secret_key = 'any random string'
 
 router = {
     MessageType.PERSONAL_INIT_INIT.value: psc.addNewUser,
-    MessageType.PERSONAL_ONLINE_INIT: psc.addPersonalServerIPadress,
-    MessageType.DEVICE_INIT_INIT: psc.addOTPforNewDevice,
-    MessageType.DEVICE_INIT_START: dc.addDevice,
-    MessageType.DEVICE_ONLINE_INIT: dc.getPersonalServerIPadress,
+    MessageType.PERSONAL_ONLINE_INIT.value: psc.addPersonalServerIPadress,
+    MessageType.DEVICE_INIT_INIT.value: psc.addOTPforNewDevice,
+    MessageType.DEVICE_INIT_START.value: dc.addDevice,
+    MessageType.DEVICE_ONLINE_INIT.value: dc.getPersonalServerIPadress,
 }
 
 

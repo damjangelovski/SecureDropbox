@@ -15,11 +15,11 @@ def addDevice(request):
 
     if MessageProperty.ONE_TIME_PAD.value not in request:
         print(' bad new user request, no one time pad provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK, MessageProperty.STATUS.value: 'no otp'})
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value, MessageProperty.STATUS.value: 'no otp'})
 
     if MessageProperty.DEVICE_PUBLIC_KEY.value not in request:
         print(' bad new user request, no public key for device provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK,
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value,
                         MessageProperty.STATUS.value: 'no device-public-key'})
 
     repo.setDevice(1, username, request.get(MessageProperty.DEVICE_PUBLIC_KEY.value))
@@ -42,7 +42,7 @@ def getPersonalServerIPadress(request):
 
     if MessageProperty.DEVICE_ID.value not in request:
         print(' bad new user request, no ID for device provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK,
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value,
                         MessageProperty.STATUS.value: 'no deviceId'})
 
     IP = repo.getIP(request.get(MessageProperty.USERNAME.value))

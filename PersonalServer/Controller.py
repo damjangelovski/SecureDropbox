@@ -1,4 +1,6 @@
 from flask import jsonify
+
+from Common.MessageProperty import MessageProperty
 from Common.MessageType import MessageType
 
 def deviceInitFromGlobal(request):
@@ -9,19 +11,19 @@ def deviceInitFromGlobal(request):
 def deviceInitFromDevice(request):
     if 'device-id' not in request:
         print(' bad new user request, no device-id provided')
-        return jsonify(messageType=MessageType.PERSONAL_INIT_OK.value, status='no username')
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value, MessageProperty.STATUS.value: 'no username'})
 
     if 'device-public-key' not in request:
         print(' bad new user request, no device-public-key for personal server provided')
-        return jsonify(messageType=MessageType.PERSONAL_INIT_OK, status='no personal-public-key')
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK, MessageProperty.STATUS.value: 'no personal-public-key'})
 
     if 'otp' not in request:
         print(' bad new user request, no one time pad provided')
-        return jsonify(messageType=MessageType.PERSONAL_INIT_OK, status='no otp')
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK, MessageProperty.STATUS.value: 'no otp'})
 
     if 'username' not in request:
         print(' bad new user request, no username provided')
-        return jsonify(messageType=MessageType.PERSONAL_INIT_OK.value, status='no username')
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value, MessageProperty.STATUS.value: 'no username'})
 
     addDeviceToLocalStorage(request.get('device-id'), request.get('device-public-key'), request.get('username'))
 
@@ -50,10 +52,10 @@ def readDevicesFromLocalStorage(deviceId, devicePublicKey):
 
         if deviceId == storedDeviceId:
             if devicePublicKey == storedDevicePublicKey:
-                return jsonify(messageType=MessageType.PERSONAL_INIT_OK.value, status='OK')
+                return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value, MessageProperty.STATUS.value: 'OK'})
             else:
                 print('invalid device public key')
-                return jsonify(messageType=MessageType.PERSONAL_INIT_OK.value, status='invalid device public key')
+                return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value, MessageProperty.STATUS.value: 'invalid device public key'})
 
     print('device not found')
-    return jsonify(messageType=MessageType.PERSONAL_INIT_OK.value, status='no device found')
+    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value, MessageProperty.STATUS.value: 'no device found'})

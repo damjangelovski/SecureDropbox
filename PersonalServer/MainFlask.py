@@ -1,15 +1,22 @@
+import socket
+
 from flask import Flask, session, redirect, url_for, escape, request
+
+from Common.MessageProperty import MessageProperty
 from Common.MessageType import *
-from PersonalServer import Controller
+from PersonalServer import Controller, ToGlobal
+
 app = Flask(__name__)
 app.secret_key = 'any random string'
 
 router = {
-    MessageType.DEVICE_INIT_OK_TO_PERSONAL: Controller.deviceInitFromGlobal ,
-    MessageType.DEVICE_INIT_CONNECT_TO_PERSONAL: Controller.deviceInitFromDevice,
-    MessageType.DEVICE_ONLINE_CONNECT: Controller.connectDevice,
+    MessageType.DEVICE_INIT_OK_TO_PERSONAL.value: Controller.deviceInitFromGlobal ,
+    MessageType.DEVICE_INIT_CONNECT_TO_PERSONAL.value: Controller.deviceInitFromDevice,
+    MessageType.DEVICE_ONLINE_CONNECT.value: Controller.connectDevice,
 }
 
+myIPsocket = ''
+username = ''
 
 @app.route('/')
 def index():
@@ -25,9 +32,12 @@ def index():
     return router.get(request.form[MessageProperty.MESSAGE_TYPE.value])(request.form)
 
 
-def init():
+def init(usernameTmp):
+    global myIPsocket
+    myIPsocket = socket.gethostbyname(socket.gethostname())+':5000'
+    print("socket '%s'"%myIPsocket)
+    global username
+    username = usernameTmp
+    ToGlobal.registerIPadress(username, myIPsocket)
+
     app.run(debug=True)
-
-
-if __name__ == '__main__':
-    init()

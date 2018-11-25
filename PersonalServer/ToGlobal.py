@@ -16,8 +16,8 @@ def addNewUser(username):
         print('can\'t register user, request status %s' % req.status_code)
         exit(1)
     resp = req.json()
-    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.PERSONAL_INIT_OK:
-        print('bad message type %d, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE.value))
+    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.PERSONAL_INIT_OK.value:
+        print('bad message type %s, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE.value))
 
     if MessageProperty.STATUS.value not in resp:
         print('status not in response')
@@ -30,16 +30,15 @@ def addNewUser(username):
 
 
 def registerIPadress(username, address):
-    req = requests.request('POST', globalIP,
-                           data={MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_ONLINE_INIT.value, MessageProperty.USERNAME.value: username,
-                                 'personal-ip': address})
+    req = requests.request('POST', globalIP, data={MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_ONLINE_INIT.value,
+                                       MessageProperty.USERNAME.value: username, MessageProperty.PERSONAL_IP_SOCKET.value: address})
 
     if req.status_code != 200:
-        print('can\'t register IP, request status $s' % req.status_code)
+        print('can\'t register IP, request status %s' % req.status_code)
         exit(1)
     resp = req.json()
     if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.PERSONAL_ONLINE_OK:
-        print('bad message type %d, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE.value))
+        print('bad message type %s, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE.value))
 
     if MessageProperty.STATUS.value not in resp:
         print('status not in response')
