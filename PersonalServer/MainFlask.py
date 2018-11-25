@@ -30,8 +30,8 @@ def index():
         print('no message-type included')
         return 'no message-type included'
     if request.form[MessageProperty.MESSAGE_TYPE.value] not in router:
-        print("message-type %d not handled" % (request.form[MessageProperty.MESSAGE_TYPE.value]))
-        return "message-type %d not handled" % (request.form[MessageProperty.MESSAGE_TYPE.value])
+        print("message-type %s not handled" % (request.form[MessageProperty.MESSAGE_TYPE.value]))
+        return "message-type %s not handled" % (request.form[MessageProperty.MESSAGE_TYPE.value])
     return router.get(request.form[MessageProperty.MESSAGE_TYPE.value])(request.form)
 
 

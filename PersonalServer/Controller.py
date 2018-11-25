@@ -36,7 +36,7 @@ def deviceInitFromDevice(request):
 
 
 def connectDevice(request):
-    return 'OK'
+    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_ONLINE_OK.value, MessageProperty.STATUS.value: 'OK'})
 
 
 def addDeviceToLocalStorage(deviceId, devicePublicKey, OTP, username):
@@ -75,16 +75,17 @@ def syncRequest(request):
        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_CHECK_OK.value,
                        MessageProperty.STATUS.value: 'no file changes object'})
 
-    for change in request.get(MessageProperty.FILE_CHANGES_OBJECT):
+    for change in request.get(MessageProperty.FILE_CHANGES_OBJECT.value):
         applyChanges(change['path'], change.get['contents'])
 
     return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_CHECK_OK.value,
                     MessageProperty.STATUS.value: 'OK'})
 
 
-def syncCheck():
+def syncCheck(request):
     changes = checkChanges()
-    print('personal server has changes='+changes)
-    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_REQUEST_OK.value,
-                    MessageProperty.FILE_CHANGES_OBJECT: changes,
+    print('personal server has changes=')
+    print(changes)
+    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_CHECK_OK.value,
+                    MessageProperty.FILE_CHANGES_OBJECT.value: changes,
                     MessageProperty.STATUS.value: 'OK'})
