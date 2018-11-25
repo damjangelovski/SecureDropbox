@@ -3,20 +3,21 @@ import requests
 from Common.MessageProperty import MessageProperty
 from Common.MessageType import MessageType
 
-globalIP = '127.0.0.1:5000'
+globalIP = 'http://127.0.0.1:5000'
 personalIP = ''
 deviceID = 0
 
 def registerDevice(username, otp):
     req = requests.request('POST', globalIP, data={MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_START.value,
-                                                MessageProperty.USERNAME.value: username, MessageProperty.ONE_TIME_PAD.value: otp})
+                                                MessageProperty.USERNAME.value: username, MessageProperty.ONE_TIME_PAD.value: otp,
+                                                   MessageProperty.DEVICE_PUBLIC_KEY.value: '123'})
 
     if req.status_code != 200:
-        print('can\'t register Device, request status $s'%req.status_code)
+        print('can\'t register Device, request status %s'%req.status_code)
         return
     resp = req.json()
     if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.DEVICE_INIT_OK_TO_DEVICE:
-        print('bad message type %d, continuing...'%resp.get(MessageProperty.MESSAGE_TYPE.value))
+        print('bad message type %s, continuing...'%resp.get(MessageProperty.MESSAGE_TYPE.value))
 
     if MessageProperty.DEVICE_ID.value not in resp:
         print('id not included, continuing...')

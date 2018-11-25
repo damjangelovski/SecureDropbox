@@ -10,6 +10,7 @@ class MessageType(Enum):
     PERSONAL_ONLINE_OK = '4'
 
     DEVICE_INIT_INIT = '5'
+    DEVICE_INIT_INIT_OK = '5.5'
     DEVICE_INIT_START = '6'
     DEVICE_INIT_OK_TO_PERSONAL = '7'
     DEVICE_INIT_OK_TO_DEVICE = '8'

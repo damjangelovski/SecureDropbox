@@ -18,7 +18,7 @@ def main(argv):
 
     if username == '':
         print('personal-server.py -u <username> [-n] [-d]')
-        sys.exit(2)
+        sys.exit(1)
 
     if otp != '':
         registerDevice(username, otp)

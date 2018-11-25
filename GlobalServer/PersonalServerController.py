@@ -23,32 +23,32 @@ def addNewUser(request):
 def addPersonalServerIPadress(request):
     if MessageProperty.USERNAME.value not in request:
         print(' bad new user request, no username provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value,
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_ONLINE_OK.value,
                         MessageProperty.STATUS.value: 'no username'})
 
     if MessageProperty.PERSONAL_IP_SOCKET.value not in request:
         print(' bad new user request, no IP socket personal server provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value,
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_ONLINE_OK.value,
                         MessageProperty.STATUS.value: 'no personal-IP'})
 
     repo.setIP(request.get(MessageProperty.USERNAME.value), request.get(MessageProperty.PERSONAL_IP_SOCKET.value))
 
-    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value, MessageProperty.STATUS.value: 'OK'})
+    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_ONLINE_OK.value, MessageProperty.STATUS.value: 'OK'})
 
 
 def addOTPforNewDevice(request):
     if MessageProperty.USERNAME.value not in request:
         print(' bad new user request, no username provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value,
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_INIT_OK.value,
                         MessageProperty.STATUS.value: 'no username'})
 
     if MessageProperty.ONE_TIME_PAD.value not in request:
         print(' bad new user request, no one time pad provided')
-        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value, MessageProperty.STATUS.value: 'no otp'})
+        return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_INIT_OK.value, MessageProperty.STATUS.value: 'no otp'})
 
-    repo.setIP(request.get(MessageProperty.USERNAME.value), request.get(MessageProperty.ONE_TIME_PAD.value))
+    repo.setOTP(request.get(MessageProperty.USERNAME.value), request.get(MessageProperty.ONE_TIME_PAD.value))
 
-    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value, MessageProperty.STATUS.value: 'OK'})
+    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_INIT_OK.value, MessageProperty.STATUS.value: 'OK'})
 
 
 def getAllUsers():

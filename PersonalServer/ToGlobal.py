@@ -8,9 +8,8 @@ from Common.MessageType import MessageType
 globalIP = 'http://127.0.0.1:5000/'
 
 def addNewUser(username):
-    req = requests.request('POST', globalIP,
-                           data={MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_INIT.value, MessageProperty.USERNAME.value: username,
-                                 MessageProperty.PERSONAL_PUBLIC_KEY.value: '123'})
+    req = requests.request('POST', globalIP, data={MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_INIT.value,
+                                   MessageProperty.USERNAME.value: username, MessageProperty.PERSONAL_PUBLIC_KEY.value: '123'})
 
     if req.status_code != 200:
         print('can\'t register user, request status %s' % req.status_code)
@@ -52,21 +51,21 @@ def registerIPadress(username, address):
 
 def addDevice(username, otp):
     req = requests.request('POST', globalIP,
-                           data={MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_INIT.value, MessageProperty.USERNAME.value: username, MessageProperty.ONE_TIME_PAD.value: otp})
+                           data={MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_INIT.value,
+                                 MessageProperty.USERNAME.value: username, MessageProperty.ONE_TIME_PAD.value: otp})
 
     if req.status_code != 200:
         print('can\'t register user, request status $s' % req.status_code)
         exit(1)
     resp = req.json()
-    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.PERSONAL_INIT_OK:
-        print('bad message type %d, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE.value))
+    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.DEVICE_INIT_INIT_OK:
+        print('bad message type %s, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE.value))
 
     if MessageProperty.STATUS.value not in resp:
         print('status not in response')
         return
 
     if resp.get(MessageProperty.STATUS.value) == 'OK':
-        print("added new user " + username)
+        print("added new OTP for user %s" % username)
     else:
-        print("NOT added new user " + username)
-    print("sent new device OTP to global for user %s" % username)
+        print("NOT added new user %s because '%s'" % (username, resp.get(MessageProperty.STATUS.value)))
