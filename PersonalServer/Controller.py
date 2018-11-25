@@ -65,3 +65,17 @@ def readDevicesFromLocalStorage(deviceId, devicePublicKey):
 
     print('device not found')
     return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_OK.value, MessageProperty.STATUS.value: 'no device found'})
+
+
+def syncRequest(request):
+
+    #if MessageProperty.F.value not in request:
+    #    print(' bad sync request, no file changes object')
+    #    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK.value,
+    #                    MessageProperty.STATUS.value: 'no file changes object'})
+
+
+
+
+def syncCheck():
+    pass

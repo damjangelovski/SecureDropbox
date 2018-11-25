@@ -13,6 +13,8 @@ router = {
     MessageType.DEVICE_INIT_OK_TO_PERSONAL.value: Controller.deviceInitFromGlobal ,
     MessageType.DEVICE_INIT_CONNECT_TO_PERSONAL.value: Controller.deviceInitFromDevice,
     MessageType.DEVICE_ONLINE_CONNECT.value: Controller.connectDevice,
+    MessageType.SYNC_REQUEST.value: Controller.syncRequest,
+    MessageType.SYNC_CHECK.value: Controller.syncCheck,
 }
 
 myIPsocket = ''
