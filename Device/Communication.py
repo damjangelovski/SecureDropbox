@@ -107,7 +107,8 @@ def startDevice(username):
 def syncWithPersonal(username):
 
     changes = checkChanges()
-    print('device has changes='.join(changes))
+    print('device has changes=')
+    print(changes)
 
     if len(changes) > 0:
 
@@ -150,4 +151,4 @@ def syncWithPersonal(username):
         return
 
     for change in syncCheckReqr.get(MessageProperty.FILE_CHANGES_OBJECT.value):
-        applyChanges(change['path'], change.get['contents'])
+        applyChanges(change['path'], change['contents'])

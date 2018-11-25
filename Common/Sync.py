@@ -36,7 +36,7 @@ def prepareFile(filePath, modifiedDate, changedFiles):
     #print('applying changes for file ' + filePath)
 
     with open(filePath, "rb") as file:
-        encoded_string = base64.b64encode(file.read())
+        encoded_string = str(base64.b64encode(file.read()))
 
         data = {}
         data['path'] = getRelativePath(filePath)
