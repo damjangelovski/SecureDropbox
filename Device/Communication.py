@@ -1,20 +1,17 @@
-import requests
-import time
-
+from Common.Communication import *
 from Common.MessageProperty import MessageProperty
 from Common.MessageType import MessageType
 from Common.Sync import *
-from threading import Timer
 
-globalIP = 'http://192.168.1.50:5000'
 personalIP = ''
+personalPK = ''
 deviceID = 0
 rootPath = 'D:\dev\pycharm\deviceSyncFolder'
 refreshIntervalInSeconds = 3
 
 
 def registerDevice(username, otp):
-    req = requests.request('POST', globalIP, data={MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_START.value,
+    req = sendEncryptedMessageToGlobal({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_START.value,
                                                 MessageProperty.USERNAME.value: username, MessageProperty.ONE_TIME_PAD.value: otp,
                                                    MessageProperty.DEVICE_PUBLIC_KEY.value: '123'})
 
@@ -36,12 +33,19 @@ def registerDevice(username, otp):
         print('personal server IP not included, breaking...')
         return
     global personalIP
+    if MessageProperty.PERSONAL_PUBLIC_KEY.value not in resp:
+        print('personal server public key not included, breaking...')
+        return
+    global personalPK
     personalIP = resp.get(MessageProperty.PERSONAL_IP_SOCKET.value)
+    personalPK = resp.get(MessageProperty.PERSONAL_PUBLIC_KEY.value)
 
-    finalOK = requests.request('POST', 'http://'+personalIP,
-                               data = {MessageProperty.MESSAGE_TYPE.value:MessageType.DEVICE_INIT_CONNECT_TO_PERSONAL.value,
-                            MessageProperty.USERNAME.value:username,MessageProperty.ONE_TIME_PAD.value:otp,
-                           MessageProperty.DEVICE_ID.value: deviceID, MessageProperty.DEVICE_PUBLIC_KEY.value: '123'})
+    finalOK = sendEncryptedMessage(
+        'http://' + personalIP,
+        {MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_CONNECT_TO_PERSONAL.value,
+            MessageProperty.USERNAME.value: username, MessageProperty.ONE_TIME_PAD.value: otp,
+            MessageProperty.DEVICE_ID.value: deviceID, MessageProperty.DEVICE_PUBLIC_KEY.value: '123'},
+        personalPK)
 
     if finalOK.status_code != 200:
         print('can\'t register Device, request status %s'%finalOK.status_code)
@@ -61,8 +65,10 @@ def registerDevice(username, otp):
 
 
 def startDevice(username):
-    req = requests.request('POST', globalIP, data={MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_ONLINE_INIT.value,
-                                            MessageProperty.USERNAME.value: username, MessageProperty.DEVICE_ID.value: deviceID})
+    req = sendEncryptedMessageToGlobal({
+        MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_ONLINE_INIT.value,
+        MessageProperty.USERNAME.value: username,
+        MessageProperty.DEVICE_ID.value: deviceID})
 
     if req.status_code != 200:
         print('can\'t get personal IP, request status %s'%req.status_code)
@@ -77,8 +83,17 @@ def startDevice(username):
     global personalIP
     personalIP = resp.get(MessageProperty.PERSONAL_IP_SOCKET.value)
 
-    finalOK = requests.request('POST', 'http://'+personalIP, data={MessageProperty.MESSAGE_TYPE.value:MessageType.DEVICE_ONLINE_CONNECT.value,
-                                                MessageProperty.USERNAME.value:username, MessageProperty.DEVICE_ID.value: deviceID})
+    if MessageProperty.PERSONAL_PUBLIC_KEY.value not in resp:
+        print('personal server PK not included, breaking...')
+        exit(1)
+    global personalPK
+    personalPK = resp.get(MessageProperty.PERSONAL_PUBLIC_KEY.value)
+
+    finalOK = sendEncryptedMessage('http://'+personalIP,
+        {MessageProperty.MESSAGE_TYPE.value:MessageType.DEVICE_ONLINE_CONNECT.value,
+            MessageProperty.USERNAME.value:username,
+            MessageProperty.DEVICE_ID.value: deviceID},
+        personalPK)
 
     if finalOK.status_code != 200:
         print('can\'t connect Device, request status %s'%req.status_code)
@@ -112,9 +127,13 @@ def syncWithPersonal(username):
 
     if len(changes) > 0:
 
-        syncReq = requests.request('POST', 'http://'+personalIP, data={MessageProperty.MESSAGE_TYPE.value:MessageType.SYNC_REQUEST.value,
-                                                MessageProperty.USERNAME.value:username, MessageProperty.DEVICE_ID.value: deviceID,
-                                                MessageProperty.FILE_CHANGES_OBJECT.value: changes})
+        syncReq = sendEncryptedMessage('http://'+personalIP,
+        {MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_REQUEST.value,
+            MessageProperty.USERNAME.value: username,
+            MessageProperty.DEVICE_ID.value: deviceID,
+            MessageProperty.FILE_CHANGES_OBJECT.value: changes},
+        personalPK)
+
         if syncReq.status_code != 200:
             print('can\'t connect Device, request status %s' % syncReq.status_code)
             return
@@ -132,8 +151,11 @@ def syncWithPersonal(username):
 
         print("device connected for %s" % (username))
 
-    syncCheckReq = requests.request('POST', 'http://'+personalIP, data={MessageProperty.MESSAGE_TYPE.value:MessageType.SYNC_CHECK.value,
-                                                MessageProperty.USERNAME.value:username, MessageProperty.DEVICE_ID.value: deviceID})
+    syncCheckReq = sendEncryptedMessage('http://'+personalIP,
+        {MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_CHECK.value,
+            MessageProperty.USERNAME.value: username,
+            MessageProperty.DEVICE_ID.value: deviceID},
+        personalPK)
 
     if syncCheckReq.status_code != 200:
         print('can\'t connect Device, request status %s'%syncCheckReq.status_code)

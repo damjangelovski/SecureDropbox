@@ -12,5 +12,5 @@ class MessageProperty(Enum):
     DEVICE_PUBLIC_KEY = 'device-public-key'
     DEVICE_ID = 'device-id'
     FILE_CHANGES_OBJECT = 'file-changes-object'
-
+    ENCRYPTED_MESSAGE = 'encrypted-message'
 

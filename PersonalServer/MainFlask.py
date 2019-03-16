@@ -1,3 +1,4 @@
+import json
 import socket
 
 from flask import Flask, session, redirect, url_for, escape, request
@@ -5,6 +6,7 @@ from flask import Flask, session, redirect, url_for, escape, request
 from Common.MessageProperty import MessageProperty
 from Common.MessageType import *
 from Common import Sync
+from Common.Security import decrypt
 from PersonalServer import Controller, ToGlobal
 
 app = Flask(__name__)
@@ -26,13 +28,23 @@ def index():
     if request.method != 'POST':
         print('not POST request')
         return 'not POST request'
-    if MessageProperty.MESSAGE_TYPE.value not in request.form:
+    print('got message' + json.dumps(request.form))
+    if MessageProperty.ENCRYPTED_MESSAGE.value not in request.form:
+        print('no encrypted message included')
+        return 'no encrypted message included'
+    try:
+        requestForm = json.loads(decrypt(request.form[MessageProperty.ENCRYPTED_MESSAGE.value], '123'))
+    except:
+        print('cant decrypt: '+request.form[MessageProperty.ENCRYPTED_MESSAGE.value])
+        return 'cant decrypt'
+
+    if MessageProperty.MESSAGE_TYPE.value not in requestForm:
         print('no message-type included')
         return 'no message-type included'
-    if request.form[MessageProperty.MESSAGE_TYPE.value] not in router:
-        print("message-type %s not handled" % (request.form[MessageProperty.MESSAGE_TYPE.value]))
-        return "message-type %s not handled" % (request.form[MessageProperty.MESSAGE_TYPE.value])
-    return router.get(request.form[MessageProperty.MESSAGE_TYPE.value])(request.form)
+    if requestForm[MessageProperty.MESSAGE_TYPE.value] not in router:
+        print("message-type %s not handled" % (requestForm[MessageProperty.MESSAGE_TYPE.value]))
+        return "message-type %s not handled" % (requestForm[MessageProperty.MESSAGE_TYPE.value])
+    return router.get(requestForm[MessageProperty.MESSAGE_TYPE.value])(requestForm)
 
 
 def init(usernameTmp):

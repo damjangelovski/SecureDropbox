@@ -1,6 +1,6 @@
-import requests
 from flask import jsonify
 
+from Common.Communication import sendEncryptedMessage
 from Common.MessageProperty import MessageProperty
 from Common.MessageType import MessageType
 from GlobalServer import SQLiteRepo as repo
@@ -25,13 +25,20 @@ def addDevice(request):
     deviceId = repo.setDevice(username, request.get(MessageProperty.DEVICE_PUBLIC_KEY.value))
 
     personalIP = repo.getIP(username)
+    personalPK = repo.getPersonalPubKey(username)
     if personalIP != '':
         url = 'http://' + personalIP
-        requests.request('POST', url, data={MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK_TO_PERSONAL.value,
-                                 MessageProperty.USERNAME.value: username, MessageProperty.DEVICE_ID.value: deviceId})
+        sendEncryptedMessage(url,
+            {MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK_TO_PERSONAL.value,
+                MessageProperty.USERNAME.value: username, MessageProperty.DEVICE_ID.value: deviceId},
+            personalPK)
 
-    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK_TO_DEVICE.value, MessageProperty.DEVICE_ID.value: deviceId,
-                    MessageProperty.PERSONAL_IP_SOCKET.value: personalIP, MessageProperty.STATUS.value: 'OK'})
+    return jsonify({
+        MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_OK_TO_DEVICE.value,
+        MessageProperty.DEVICE_ID.value: deviceId,
+        MessageProperty.PERSONAL_IP_SOCKET.value: personalIP,
+        MessageProperty.PERSONAL_PUBLIC_KEY.value: personalPK,
+        MessageProperty.STATUS.value: 'OK'})
 
 def getPersonalServerIPadress(request):
 
@@ -45,10 +52,14 @@ def getPersonalServerIPadress(request):
         return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_ONLINE_GLOBAL_RETURN.value,
                         MessageProperty.STATUS.value: 'no deviceId'})
 
-    IP = repo.getIP(request.get(MessageProperty.USERNAME.value))
+    personalIP = repo.getIP(request.get(MessageProperty.USERNAME.value))
+    personalPK = repo.getPersonalPubKey(request.get(MessageProperty.USERNAME.value))
 
-    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_ONLINE_GLOBAL_RETURN.value,
-                    MessageProperty.STATUS.value: 'OK', MessageProperty.PERSONAL_IP_SOCKET.value: IP})
+    return jsonify({
+        MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_ONLINE_GLOBAL_RETURN.value,
+        MessageProperty.STATUS.value: 'OK',
+        MessageProperty.PERSONAL_IP_SOCKET.value: personalIP,
+        MessageProperty.PERSONAL_PUBLIC_KEY.value: personalPK})
 
 
 def getAllDevices():

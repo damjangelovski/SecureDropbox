@@ -1,19 +1,21 @@
 
 def encrypt(message, key):
-    print("encrypting")
-    return message
+    return key+message
 
 
 def decrypt(message, key):
-    print("decrypting")
-    return message
+    if len(message) >= len(key) and message[:len(key)] == key:
+        return message[len(key):]
+    return "FAILED TO DECRYPT!!"
 
 
 def sign(message, key):
-    print("signing")
-    return message
+    return key+message
 
 
 def checkSignature(message, key):
-    print("checking signature")
-    return True
+    return len(message) >= len(key) and message[:len(key)] == key
+
+def getGlobalPublicKey():
+    return 'globalKey'
+

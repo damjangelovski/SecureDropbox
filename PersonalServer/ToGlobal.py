@@ -1,6 +1,6 @@
-import requests
 import random
 
+from Common.Communication import sendEncryptedMessageToGlobal
 from Common.MessageProperty import MessageProperty
 from Common.MessageType import MessageType
 
@@ -8,8 +8,8 @@ from Common.MessageType import MessageType
 globalIP = 'http://127.0.0.1:5000/'
 
 def addNewUser(username):
-    req = requests.request('POST', globalIP, data={MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_INIT.value,
-                                   MessageProperty.USERNAME.value: username, MessageProperty.PERSONAL_PUBLIC_KEY.value: '123'})
+    req = sendEncryptedMessageToGlobal({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_INIT_INIT.value,
+            MessageProperty.USERNAME.value: username, MessageProperty.PERSONAL_PUBLIC_KEY.value: '123'})
 
     if req.status_code != 200:
         print('can\'t register user, request status %s' % req.status_code)
@@ -29,14 +29,14 @@ def addNewUser(username):
 
 
 def registerIPadress(username, address):
-    req = requests.request('POST', globalIP, data={MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_ONLINE_INIT.value,
-                                       MessageProperty.USERNAME.value: username, MessageProperty.PERSONAL_IP_SOCKET.value: address})
+    req = sendEncryptedMessageToGlobal({MessageProperty.MESSAGE_TYPE.value: MessageType.PERSONAL_ONLINE_INIT.value,
+                MessageProperty.USERNAME.value: username, MessageProperty.PERSONAL_IP_SOCKET.value: address})
 
     if req.status_code != 200:
         print('can\'t register IP, request status %s' % req.status_code)
         exit(1)
     resp = req.json()
-    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.PERSONAL_ONLINE_OK:
+    if resp.get(MessageProperty.MESSAGE_TYPE.value) != MessageType.PERSONAL_ONLINE_OK.value:
         print('bad message type %s, continuing...' % resp.get(MessageProperty.MESSAGE_TYPE.value))
 
     if MessageProperty.STATUS.value not in resp:
@@ -50,8 +50,7 @@ def registerIPadress(username, address):
 
 
 def addDevice(username, otp):
-    req = requests.request('POST', globalIP,
-                           data={MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_INIT.value,
+    req = sendEncryptedMessageToGlobal({MessageProperty.MESSAGE_TYPE.value: MessageType.DEVICE_INIT_INIT.value,
                                  MessageProperty.USERNAME.value: username, MessageProperty.ONE_TIME_PAD.value: otp})
 
     if req.status_code != 200:
