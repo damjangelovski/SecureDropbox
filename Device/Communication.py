@@ -122,8 +122,8 @@ def startDevice(username):
 def syncWithPersonal(username):
 
     changes = checkChanges()
-    print('device has changes=')
-    print(changes)
+    if(changes != []):
+        print('device has changes=' + str(changes))
 
     if len(changes) > 0:
 

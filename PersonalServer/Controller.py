@@ -91,20 +91,22 @@ def syncRequest(request):
 
     if MessageProperty.FILE_CHANGES_OBJECT.value not in request:
        print(' bad sync request, no file changes object')
-       return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_CHECK_OK.value,
-                       MessageProperty.STATUS.value: 'no file changes object'})
+       return jsonify({
+           MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_REQUEST_OK.value,
+           MessageProperty.STATUS.value: 'no file changes object'})
 
     for change in request.get(MessageProperty.FILE_CHANGES_OBJECT.value):
         applyChanges(change['path'], change['contents'])
 
-    return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_CHECK_OK.value,
-                    MessageProperty.STATUS.value: 'OK'})
+    return jsonify({
+        MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_REQUEST_OK.value,
+        MessageProperty.STATUS.value: 'OK'})
 
 
 def syncCheck(request):
     changes = checkChanges()
-    print('personal server has changes=')
-    print(changes)
+    if (changes != []):
+        print('personal server has changes=' + str(changes))
 
     return jsonify({MessageProperty.MESSAGE_TYPE.value: MessageType.SYNC_CHECK_OK.value,
                     MessageProperty.FILE_CHANGES_OBJECT.value: changes,

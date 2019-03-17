@@ -2,7 +2,7 @@ import os, time, base64, json
 
 rootPath = ''
 dict = {}
-refreshInterval = 100
+refreshInterval = 10
 
 def init(rootPathTmp):
     global rootPath
@@ -21,7 +21,7 @@ def checkChanges():
 
         if file in dict:
             lastModifiedDate = dict[file]
-            if lastModifiedDate == modifiedDate:
+            if lastModifiedDate < modifiedDate:
                 prepareFile(file, modifiedDate, changedFiles)
         else:
             if elapsedSeconds < refreshInterval:
@@ -35,8 +35,8 @@ def prepareFile(filePath, modifiedDate, changedFiles):
 
     #print('applying changes for file ' + filePath)
 
-    with open(filePath, "rb") as file:
-        encoded_string = str(base64.b64encode(file.read()))
+    with open(filePath, "r") as file:
+        encoded_string = file.read()
 
         data = {}
         data['path'] = getRelativePath(filePath)
@@ -54,8 +54,10 @@ def applyChanges(filePath, encoded_string):
 
     print('saving to ' + absolutePath)
 
-    with open(absolutePath, "wb") as file:
-        file.write(base64.decodebytes(encoded_string))
+    with open(absolutePath, "w") as file:
+        file.write(encoded_string)
+
+    dict[absolutePath]= os.path.getmtime(absolutePath)
 
 
 def getFiles(directory):

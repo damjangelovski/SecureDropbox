@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 from Common.MessageProperty import MessageProperty
