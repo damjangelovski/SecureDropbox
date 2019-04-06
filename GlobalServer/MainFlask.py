@@ -35,7 +35,8 @@ def index():
         print('no encrypted message included')
         return 'no encrypted message included'
     try:
-        requestForm = json.loads(decrypt(request.form[MessageProperty.ENCRYPTED_MESSAGE.value], getGlobalPublicKey()))
+        privateKey = getPrivateKeyString('D:\\dev\\pycharm\\SecureDropbox\\Common\\private_key.pem')
+        requestForm = json.loads(decrypt(request.form[MessageProperty.ENCRYPTED_MESSAGE.value], privateKey))
     except:
         print('cant decrypt: '+request.form[MessageProperty.ENCRYPTED_MESSAGE.value])
         return 'cant decrypt'

@@ -6,7 +6,7 @@ from flask import Flask, session, redirect, url_for, escape, request
 from Common.MessageProperty import MessageProperty
 from Common.MessageType import *
 from Common import Sync
-from Common.Security import decrypt
+from Common.Security import decrypt, getPrivateKeyString
 from PersonalServer import Controller, ToGlobal
 
 app = Flask(__name__)
@@ -33,7 +33,8 @@ def index():
         print('no encrypted message included')
         return 'no encrypted message included'
     try:
-        requestForm = json.loads(decrypt(request.form[MessageProperty.ENCRYPTED_MESSAGE.value], '123'))
+        privateKey = getPrivateKeyString('D:\\dev\\pycharm\\SecureDropbox\\PersonalServer\\private_key.pem')
+        requestForm = json.loads(decrypt(request.form[MessageProperty.ENCRYPTED_MESSAGE.value], privateKey))
     except:
         print('cant decrypt: '+request.form[MessageProperty.ENCRYPTED_MESSAGE.value])
         return 'cant decrypt'
